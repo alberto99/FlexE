@@ -7,7 +7,7 @@ from runs.models import *
 
 def sendmail(address, jobid):
     send_mail('Your calculation is ready', 
-       'Your calculation is ready, <a href="'+settings.URL_ROOT+'result/'+str(jobid)+'">see it here</a>', 'powerful@example.com',
+       'Your calculation is ready, <a href="'+settings.URL_ROOT+'result/'+str(jobid)+'/p1">see it here</a>', 'powerful@example.com',
         [address], fail_silently=True)
 
 def dostuff(pdb, ref, entry):
@@ -16,6 +16,8 @@ def dostuff(pdb, ref, entry):
     refs = preparefile('ref', ref)
     commands.getoutput("mkdir img")
     commands.getoutput("mkdir vmd")
+    outf = open('result.csv','w')
+    outf.write('pdb_file;ref_file;rmsdED;Forward;Backward\n')
     for pdb in pdbs:
         for ref in refs:
             rand = random.randint(1,2147483647)
@@ -28,6 +30,7 @@ def dostuff(pdb, ref, entry):
                 p.rmsdED = float(out[0])
                 p.Forw = float(out[1])
                 p.Back = float(out[2])
+                outf.write('%s;%s;%s;%s;%s' % (os.path.basename(pdb), os.path.basename(ref), str(out[0]), str(out[1]), str(out[2])))
                 p.save()
             except:
                 print "Unexpected Error when parsing the result"
@@ -36,16 +39,26 @@ def dostuff(pdb, ref, entry):
             commands.getoutput("mv paper_fig_ener.png img/%s.png" % p.id)
             #cleanup
             commands.getoutput("rm AAcolor_pdb.pdb AAcolor_ref.pdb color_pdb.pdb color_ref.pdb")
+    outf.close()
+    os.chdir(settings.MEDIA_ROOT)
+    commands.getoutput("tar czf %s.tar.gz %s/" % (entry.jobid, entry.jobid))
 
 def preparefile(dirname, filename):
     a = []
+    index = 0
     commands.getoutput("mkdir %s" % dirname)
+    string = 'reference_model_'
+    if (dirname == 'pdb'):
+        string = 'protein_model_'
     if os.path.splitext(filename)[1] == ".pdb":
-        a.append(filename)
+        commands.getoutput("mv %s %s.pdb" % (filename, string + str(index)))
+        a.append(string + str(index) + '.pdb')
+        index+=1
     elif os.path.splitext(filename)[1] == ".tar":
         tar = tarfile.open(filename)
         for tarinfo in tar:
             a.append(tarinfo.name)
+            index+=1
         tar.extractall()
         tar.close()
     return split_multipdb(dirname, a);
@@ -63,13 +76,19 @@ def split_multipdb(dirname, files):
                 continue
             if 'ENDMDL' in line:
                 outf.close()
+                outf = None
                 i += 1
                 continue
-            if (outf != None):
+            if 'ATOM' in line:
+                if (outf == None):
+                    outf = open('%s/%s%04d.pdb' % (dirname, os.path.splitext(f)[0], i),'w')
+                    a.append('%s/%s%04d.pdb' % (dirname, os.path.splitext(f)[0], i))
                 outf.write(line)
-        if (i == 0):
-            commands.getoutput("mv %s %s/%s" % (os.path.basename(f), dirname, os.path.basename(f)))    
-            a.append("%s/%s" % (dirname, os.path.basename(f)))
+    if outf != None:
+        outf.close()
+       # if (i == 0):
+        #    commands.getoutput("mv %s %s/%s" % (os.path.basename(f), dirname, os.path.basename(f)))    
+         #   a.append("%s/%s" % (dirname, os.path.basename(f)))
     return a
        
 

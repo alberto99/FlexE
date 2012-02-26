@@ -28,6 +28,8 @@
     		<li>Description: {{description}}</li>
     		<li>Protein Name: {{protein}}</li>
     		<li>Submitter: {{submitter}}</li>
+		<li><a href="/static/{{jobid}}.tar.gz" class="link_blue">Download All Related Files</a></li>
+		<li><a href="/static/{{jobid}}/result.csv" class="link_blue">Download Summary</a></li>
 	</ul>	
 	{% block content %}
 	    <table class="my_sub_table" style="margin-left:auto;margin-right:auto;">
@@ -52,13 +54,13 @@
 	        <div class="pagination" style="text-align:center;padding-top:30px">
 	            <span class="page-links">
 	                {% if page_obj.has_previous %}
-	                    <a href="/queue/page{{ page_obj.previous_page_number }}" class="link_blue">previous</a>
+	                    <a href="/result/{{ jobid }}/p{{ page_obj.previous_page_number }}" class="link_blue">previous</a>
 	                {% endif %}
 	                <span class="page-current">
 	                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
 	                </span>
 	                {% if page_obj.has_next %}
-	                    <a href="/queue/page{{ page_obj.next_page_number }}" class="link_blue">next</a>
+	                    <a href="/result/{{ jobid }}/p{{ page_obj.next_page_number }}" class="link_blue">next</a>
 	                {% endif %}
 	            </span>
 	        </div>

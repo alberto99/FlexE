@@ -10,22 +10,24 @@ import commands
 from django.views.generic import ListView
 
 class ResultListView(ListView):
-    paginate_by = 20
+    paginate_by = 15
     context_object_name = "result_list"
     template_name = "result_list.html"
 
     def get_queryset(self):
         order_by = self.request.GET.get('order_by', 'rmsdED');
-        return Out.objects.filter(jobid=self.args[0]).order_by(order_by)
+        print self.kwargs;
+        return Out.objects.filter(jobid=self.kwargs['pk']).order_by(order_by)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ResultListView, self).get_context_data(**kwargs)
         # Add in the publisher
-        entry = Entry.objects.get(jobid=self.args[0])
+        entry = Entry.objects.get(jobid=self.kwargs['pk'])
         context['submitter'] = entry.submitter;
         context['description'] = entry.description;
         context['protein'] = entry.name;
+        context['jobid'] = entry.jobid;
         return context
 
 def index(request):
