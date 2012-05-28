@@ -31,7 +31,7 @@ class ResultListView(ListView):
         return context
 
 def index(request):
-    return add(request)
+    return render_to_response("instructions.html")
 
 def add(request):
     #Result success or fail
