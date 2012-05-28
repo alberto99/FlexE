@@ -16,7 +16,7 @@
 				<ul>
 					<li><a href="/">Home</a><span>|</span></li>
 					<li><a href="/add">Submission</a><span>|</span></li>
-					<li><a href="#" class="current">recent submissions</a><span>|</span></li>
+					<li><a href="#" class="current">Recent Submissions</a><span>|</span></li>
 				</ul>
 			</div>
 		</div>
@@ -37,7 +37,7 @@
 	            {% if entry.done %}
 			<td>Done</td>
 		        {% if entry.public %}      	
-	                	<td><a href="/result/{{ entry.jobid }}" class="link_blue">{{entry.jobid}}</a></td>
+	                	<td><a href="/result/{{ entry.jobid }}/p1" class="link_blue">{{entry.jobid}}</a></td>
 			{% else %}
 				<td> private </td>
 			{% endif %}

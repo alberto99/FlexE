@@ -21,9 +21,10 @@
 			</div>
 		</div>
 		<div class="content_wrap wrap_990 clearfix" style="padding-top:20px;padding-bottom:25px;">
-			<div class="regis_left">
-				<span class="span_head_one">Add a Job here</span>		
+			<div class="submission_border">
+				<p class="submission_titile">Add a Job here</span>		
 				<span style="color:#848484;margin-left:20px;"> <span class="regis_red"> Input</span> is required</span>
+				<div class="search_box">
 				<form id="add_form" enctype="multipart/form-data" method="post" action="">
     				{% csrf_token %}
 				
@@ -59,6 +60,7 @@
 					<a href="javascript:void(0);" class="btn_regis" onclick='$("#add_form").submit();'> Submit </a>
 				</div>
 				</form>
+				</div>
 			</div>
 		</div>
 		<div class="footer wrap_990 ">
